@@ -3,10 +3,11 @@
 
 # 준비
 * aws 프로파일을 환경변수로 설정(또는 $HOME/.aws로 관리)
+* ohio 리전 사용
 ```sh
 export AWS_ACCESS_KEY_ID=""
 export AWS_SECRET_ACCESS_KEY=""
-export AWS_DEFAULT_REGION="ap-northeast-2"
+export AWS_DEFAULT_REGION="us-east-2c"
 ```
 
 # 실행
