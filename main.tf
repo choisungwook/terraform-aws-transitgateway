@@ -18,9 +18,9 @@ module "vpc-2" {
 
   name = "terraform-demo-vpc2"
   cidr = "10.200.0.0/16"
-  create_igw = true
+  create_igw = false
 
-  public_subnets = {
+  private_subnets = {
     sub-1 = {
       az   = "ap-northeast-2c"
       cidr = "10.200.10.0/24"

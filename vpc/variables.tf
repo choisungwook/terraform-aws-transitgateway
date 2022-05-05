@@ -16,6 +16,12 @@ variable public_subnets {
   description = "public_subnet"
 }
 
+variable private_subnets {
+  type        = map
+  default     = {}
+  description = "private_subnet"
+}
+
 variable create_igw  {
   type        = bool
   default     = false

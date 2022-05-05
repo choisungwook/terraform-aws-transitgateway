@@ -19,6 +19,18 @@ resource "aws_subnet" "public" {
   }
 }
 
+resource "aws_subnet" "private" {
+  for_each = var.private_subnets
+
+  vpc_id = aws_vpc.main.id
+  cidr_block = each.value["cidr"]
+  availability_zone = each.value["az"]
+
+  tags = {
+    Name = "${var.name}-private-${each.key}"
+  }
+}
+
 resource "aws_internet_gateway" "igw" {
   count = length(var.public_subnets) > 0 && var.create_igw ? 1 : 0
 
@@ -39,6 +51,16 @@ resource "aws_route_table" "public" {
   }
 }
 
+resource "aws_route_table" "private" {
+  count = length(var.private_subnets) > 0 ? 1: 0
+
+  vpc_id = aws_vpc.main.id
+  
+  tags = {
+    Name = "${var.name}-private"
+  }
+}
+
 resource "aws_route" "public_internet_gateway" {
   count = var.create_igw && length(var.public_subnets) > 0 ? 1 : 0
 
@@ -56,4 +78,11 @@ resource "aws_route_table_association" "public" {
 
   subnet_id      = aws_subnet.public[each.key].id
   route_table_id = aws_route_table.public[0].id
+}
+
+resource "aws_route_table_association" "private" {
+  for_each = var.private_subnets
+
+  subnet_id      = aws_subnet.private[each.key].id
+  route_table_id = aws_route_table.private[0].id
 }
