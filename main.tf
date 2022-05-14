@@ -43,10 +43,10 @@ module "ec2_instance-a" {
   vpc_id    = module.vpc-a.vpc_id
   subnet_id = module.vpc-a.private_subnet_ids["sub-1"]
 
-  name          = "terraform_public_demo_a"
+  name          = "terraform_private_demo_a"
   instance_type = "t2.micro"
   ami           = "ami-0eea504f45ef7a8f7"
-  instance_public_ip = true
+  instance_public_ip = false
 }
 
 module "ec2_instance-b" {
@@ -59,4 +59,5 @@ module "ec2_instance-b" {
   name          = "terraform_private_demo_b"
   instance_type = "t2.micro"
   ami           = "ami-0eea504f45ef7a8f7"
+  instance_public_ip = false
 }
