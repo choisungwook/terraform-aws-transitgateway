@@ -42,7 +42,7 @@ resource "aws_internet_gateway" "igw" {
 }
 
 resource "aws_eip" "nat_eip" {
-  for_each = var.private_subnets
+  count = length(var.private_subnets) > 0 && var.create_igw ? 1 : 0 
 
   vpc = true
   
@@ -54,13 +54,13 @@ resource "aws_eip" "nat_eip" {
 }
 
 resource "aws_nat_gateway" "main" {
-  for_each = var.create_natgw ? var.private_subnets: {}
+  count = length(var.private_subnets) > 0 && var.create_igw ? 1 : 0 
   
-  allocation_id = aws_eip.nat_eip[each.key].id
-  subnet_id     = aws_subnet.private[each.key].id
+  allocation_id = aws_eip.nat_eip[0].id
+  subnet_id     = [for _, v in aws_subnet.public: v.id][0]
 
   tags = {
-    Name = "${var.name}-${each.key}-natgw"
+    Name = "${var.name}-natgw"
   }
 
   depends_on = [aws_internet_gateway.igw]
@@ -92,6 +92,18 @@ resource "aws_route" "public_internet_gateway" {
   route_table_id         = aws_route_table.public[0].id
   destination_cidr_block = "0.0.0.0/0"
   gateway_id             = aws_internet_gateway.igw[0].id
+
+  timeouts {
+    create = "5m"
+  }
+}
+
+resource "aws_route" "private_nat_gateway" {
+  count = var.create_natgw && length(var.private_subnets) > 0 ? 1 : 0
+
+  route_table_id         = aws_route_table.private[0].id
+  destination_cidr_block = "0.0.0.0/0"
+  nat_gateway_id         = aws_nat_gateway.main[0].id
 
   timeouts {
     create = "5m"
