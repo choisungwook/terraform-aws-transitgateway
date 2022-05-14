@@ -27,3 +27,9 @@ variable create_igw  {
   default     = false
   description = "internet gateway생성 여부"
 }
+
+variable create_natgw  {
+  type        = bool
+  default     = false
+  description = "nat gateway생성 여부"
+}

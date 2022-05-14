@@ -41,6 +41,31 @@ resource "aws_internet_gateway" "igw" {
   }
 }
 
+resource "aws_eip" "nat_eip" {
+  for_each = var.private_subnets
+
+  vpc = true
+  
+  depends_on = [aws_internet_gateway.igw]
+
+  tags = {
+    Name = "${var.name}-nat"
+  }
+}
+
+resource "aws_nat_gateway" "main" {
+  for_each = var.create_natgw ? var.private_subnets: {}
+  
+  allocation_id = aws_eip.nat_eip[each.key].id
+  subnet_id     = aws_subnet.private[each.key].id
+
+  tags = {
+    Name = "${var.name}-${each.key}-natgw"
+  }
+
+  depends_on = [aws_internet_gateway.igw]
+}
+
 resource "aws_route_table" "public" {
   count = length(var.public_subnets) > 0 ? 1: 0
 
