@@ -1,5 +1,7 @@
 # 개요
-* 테라폼 vpc연습
+* 테라폼 transit gatweway 실습을 위한 인프라 자동화
+* 유투브 영상: https://youtu.be/sN55nRo6eQs
+* 인프라 아키텍처
 
 ![](imgs/arch.png)
 
